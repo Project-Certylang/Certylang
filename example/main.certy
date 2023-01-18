@@ -1,1 +1,36 @@
-print("hi")
+// import example
+// can import .py files
+hugging "sys"; // python default package, sys
+hugging "./mypy.py"; // importing mypy.py at the same level with main.certy
+// must clarify ".py" when you import pure python file
+
+hugging "./mypy"; // importing mypy.certy at the same level with main.certy
+// don't need to clarify when you import certylang file
+// also, import like python
+hugging "asdf" from "./mypy";
+
+///////////////////////////////////
+// variable example
+nyan string hello = "hello";  // can define with - [nyan <type> <name> = <literal>]
+nyan string world;  // also predefine with - [nyan <type> <name>]
+
+world = "world!"; // give value to defined variable
+///////////////////////////////////////////
+
+// can call print function like this - [<function name>(<args, kwargs>)]
+print(hello, world, end="");  // output: hello, world!  (without newline)
+sys.stdout.write(hello, world);  // output: hello, world!  (without newline)
+
+// function define example
+con plus(a: integer, b: integer) -> integer {
+    // function named "plus" takes integer a and b as argument, and returns int
+    // docstring?
+    return a + b;
+}
+
+con take_n_give(given: integer) -> integer {
+    return given;
+}
+
+nyan integer returned_value = plus(returns_one(1), 2);  // returned_value == 3
+sys.stdout.write(string(returned_value));  // explicit conversion
