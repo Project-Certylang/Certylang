@@ -11,8 +11,8 @@ hugging "asdf" from "./mypy";
 
 ///////////////////////////////////
 // variable example
-nyan string hello = "hello";  // can define with - [nyan <type> <name> = <literal>]
-nyan string world;  // also predefine with - [nyan <type> <name>]
+var string hello = "hello";  // can define with - [var <type> <name> = <literal>]
+var string world;  // also predefine with - [var <type> <name>]
 
 world = "world!"; // give value to defined variable
 ///////////////////////////////////////////
@@ -22,15 +22,15 @@ print(hello, world, end="");  // output: hello, world!  (without newline)
 sys.stdout.write(hello, world);  // output: hello, world!  (without newline)
 
 // function define example
-con plus(a: integer, b: integer) -> integer {
+function plus(a: integer, b: integer) -> integer {
     // function named "plus" takes integer a and b as argument, and returns int
     // docstring?
     return a + b;
 }
 
-con take_n_give(given: integer) -> integer {
+function take_n_give(given: integer) -> integer {
     return given;
 }
 
-nyan integer returned_value = plus(returns_one(1), 2);  // returned_value == 3
+var integer returned_value = plus(returns_one(1), 2);  // returned_value == 3
 sys.stdout.write(string(returned_value));  // explicit conversion
