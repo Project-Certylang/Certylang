@@ -1,7 +1,7 @@
 import celexer
 tokens = celexer.tokens
 
-from ply import lex, yacc
+from .ply import yacc
 
 tokenlist = []
 preclist = []
@@ -228,7 +228,7 @@ def p_empty(p):
 def p_error(p):
     pass
 
-yacc.yacc(debug=False)
+yacc = yacc.yacc(debug=False)
 
 
 def print_code(code, indent):
