@@ -51,7 +51,7 @@ operation_tokens = (
 
 t_PLUS = r"\+"
 t_MINUS = r"-"
-t_DEVIDE = r"/"
+t_DIVIDE = r"/"
 t_MULTIPLY = r"\*"
 
 special_tokens = (
