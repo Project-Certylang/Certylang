@@ -1,6 +1,6 @@
 from ply import lex
 
-type_tokens = (
+type_tokens = (  # for guessing literal types
     'NUMBER', # int, float
     'STRING',  # str
     'BOOLEAN',  # bool
@@ -11,32 +11,61 @@ type_tokens = (
     'NONE',  # none
 )
 
+control_tokens = (
+    'IF',  # if
+    'FOR',  # for
+    'WHILE',  # while
+    'MATCH',  # match case
+    'CASE', # match case
+)
+
+define_tokens = (
+    'VAR',  # variable
+    'CLASS',  # class
+    'FUNCTION',  # function
+)
+
+special_tokens = (
+    'LPAREN',  # left parentheses, (
+    'RPAREN',  # right parentheses, )
+    'LBRACE',  # left brace, [
+    'RBRACE',  # right brace, ]
+    'LBRACKET',  # left bracket, {
+    'RBRACKET',  # riht bracket, }
+    'GT',  # grater than, >
+    'LT',  # less than, <
+    'EQ',  # equal, =
+    'DEQ',  # double equal, ==
+    'NOT',  # not, !
+)
+
+comment_tokens = (  # js-like comment
+    'COMMENT',  # single-line comment, //
+    'MLCOMMENT',  # mutli-line comment, /**/
+)
+
 tokens = (
-    'VAR', 'CLASS', 'FUNCTION',
-    'ID', 'QLITERAL',
-) + type_tokens
+type_tokens
++ control_tokens
++ define_tokens
++ special_tokens
++ comment_tokens
+)
 
 
-literals = [';', ',', '<', '>', '|', ':']
+literals = []
 t_ignore = ' \t'
 
 
-t_ID = r'[a-zA-Z_][a-zA-Z_0-9]*'  # ?
-t_QLITERAL  = r'''(?P<quote>['"]).*?(?P=quote)'''  # ?
-t_NUMBER = r'\d+'
-
-
 ##### Comment
-def t_ccomment(t):
-    r'/\*(.|\n)*?\*/'
-    t.lexer.lineno += t.value.count('\n')
+def t_COMMENT(t):
+    r"//.*"
+    pass
 
-t_ignore_cppcomment = r'//.*'
+def t_MLCOMMENT(t):
+    r"/\*(.|\n)*\*/"
+    pass
 ##### Comment END
-
-def t_NEWLINE(t):
-    r'\n'
-    t.lexer.lineno += 1
 
 
 def t_error(t):
