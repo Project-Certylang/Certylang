@@ -98,13 +98,18 @@ def t_MLCOMMENT(t):
     pass
 
 tokens = (
-type_tokens
-+ control_tokens
-+ define_tokens
-+ special_tokens
-+ comment_tokens
-+ operation_tokens
+    (
+        'ID',
+    )
+    + type_tokens
+    + control_tokens
+    + define_tokens
+    + special_tokens
+    + comment_tokens
+    + operation_tokens
 )
+
+t_ID = r"[a-zA-Z_]+[a-zA-Z0-9_]*"
 
 
 literals = []
