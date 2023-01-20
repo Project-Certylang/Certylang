@@ -102,6 +102,7 @@ tokens = (
         'ID',
         'WHITESPACE',
         'NEWLINE',
+        'DOT',
     )
     + type_tokens
     + control_tokens
@@ -114,6 +115,7 @@ tokens = (
 t_ID = r"[a-zA-Z_]+[a-zA-Z0-9_]*"
 t_WHITESPACE = r"\s"
 t_NEWLINE = r"\n"
+t_DOT = r"\."
 
 
 literals = []
