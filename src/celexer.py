@@ -100,6 +100,7 @@ def t_MLCOMMENT(t):
 tokens = (
     (
         'ID',
+        'WHITESPACE',
     )
     + type_tokens
     + control_tokens
@@ -110,6 +111,7 @@ tokens = (
 )
 
 t_ID = r"[a-zA-Z_]+[a-zA-Z0-9_]*"
+t_WHITESPACE = r"\s"
 
 
 literals = []
