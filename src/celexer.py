@@ -1,8 +1,21 @@
 from ply import lex
 
-tokens = (
-    'ID', 'QLITERAL', 'NUMBER',
+type_tokens = (
+    'NUMBER', # int, float
+    'STRING',  # str
+    'BOOLEAN',  # bool
+    'LIST',  # list
+    'TUPLE',  # tuple
+    'DICTIONARY', # dict
+    'CALLABLE', # callable
+    'NONE',  # none
 )
+
+tokens = (
+    'VAR', 'CLASS', 'FUNCTION',
+    'ID', 'QLITERAL',
+) + type_tokens
+
 
 literals = [';', ',', '<', '>', '|', ':']
 t_ignore = ' \t'

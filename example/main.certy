@@ -11,8 +11,8 @@ hugging "asdf" from "./mypy";
 
 ///////////////////////////////////
 // variable example
-var string hello = "hello";  // can define with - [var <type> <name> = <literal>]
-var string world;  // also predefine with - [var <type> <name>]
+var<string> hello = "hello";  // can define with - [var<type> <name> = <literal>]
+var<string> world;  // also predefine with - [var<type> <name>]
 
 world = "world!"; // give value to defined variable
 ///////////////////////////////////////////
