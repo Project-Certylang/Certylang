@@ -17,9 +17,3 @@ else:
     filename = sys.argv[1]
 
 ceparser.yacc.parse(open(filename).read())
-
-print("""
-if __name__ == '__main__':
-    from ply import *
-    yacc.yacc()
-""")
