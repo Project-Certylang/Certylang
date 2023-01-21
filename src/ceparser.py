@@ -149,6 +149,9 @@ def p_var_init(p):
     '''substitute : VAR '<' annotation '>' ID'''
     p[0] = AnnAssign(target=Name(id=p[5], ctx=Store()), annotation=p[3], value=None)
 
+def p_func_init(p):
+    "com : FUNCTION ID '(' call ')'"
+    p[0] = FunctionDef(name='func',args=arguments(posonlyargs=[],args=[arg(arg=p[4])],kwonlyargs=[],kw_defaults=[],defaults=[]),body=[Pass()],decorator_list=[])
 
 def p_term_calc(p):
     '''term : term MULTIPLY factor
