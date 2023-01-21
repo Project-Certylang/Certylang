@@ -9,7 +9,16 @@ type_tokens = (  # for guessing literal types
     #  'TUPLE',  Removed Tuple - Same with list
     #  'DICTIONARY',  Removed Dictionary - Same with list
     #  'CALLABLE', Removed Callable - Same with lsit
-    'NONE',  # none
+    'NONE',  # none,
+    'ANNOINTEGER', # 
+    'ANNOFLOAT', #
+    'ANNOSTRING', #
+    'ANNOBOOLEAN', #,
+    'ANNOLIST',
+    'ANNOTUPLE',
+    'ANNODICTIONARY',
+    'ANNOCALLABLE',
+    'ANNONONE'
 )
 
 t_INTEGER = r"\d+"
@@ -17,6 +26,15 @@ t_FLOAT = r"\d+.\d+"
 t_STRING = r"'.*?'|\".*?\""  # check docstring separately
 t_BOOLEAN = r"true|false"
 t_NONE = r"none"
+t_ANNOINTEGER = r"int"
+t_ANNOFLOAT = r"float"
+t_ANNOSTRING = r"str"
+t_ANNOBOOLEAN = r"bool"
+t_ANNOLIST = r"list"
+t_ANNOTUPLE = r"tuple"
+t_ANNODICTIONARY = r"dict"
+t_ANNOCALLABLE = r"callable"
+t_ANNONONE = r"none"
 
 control_tokens = (
     'IF',  # if
@@ -127,7 +145,12 @@ def t_error(t):
     print(t.value)
     t.lexer.skip(1)
 
-lex.lex()
+lexer = lex.lex()
 
-if __name__ == '__main__':
-    lex.runmain()
+# debug code
+if __name__ == "__main__":
+    lexer.input(input('>>'))
+    while True:
+        tok = lexer.token()
+        if not tok: break
+        print(":", tok)
