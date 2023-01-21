@@ -117,31 +117,6 @@ def p_literal(p):  # function call (returned value), number, string, list, etc
     p[0] = p[1]
 
 
-def p_expression_calc(p):
-    '''expression : expression PLUS term
-                  | expression MINUS term'''
-    match p[2]:
-        case '+':
-            p[0] = Expr(value=BinOp(left=p[1], op=Add(), right=p[3]))
-        case '-':
-            p[0] = Expr(value=BinOp(left=p[1], op=Sub(), right=p[3]))
-
-
-def p_expression_term(p):
-    'expression : term'
-    p[0] = p[1]
-
-
-def p_term_calc(p):
-    '''term : term MULTIPLY factor
-            | term DIVIDE factor'''
-    match [2]:
-        case '*':
-            p[0] = Expr(value=BinOp(left=p[1], op=Mult(), right=p[3]))
-        case '/':
-            p[0] = Expr(value=BinOp(left=p[1], op=Div(), right=p[3]))
-
-
 class AssignTemp:
     def __init__(self, targets: list, value):
         self.targets = targets
@@ -175,13 +150,39 @@ def p_var_init(p):
     p[0] = AnnAssign(target=Name(id=p[5], ctx=Store()), annotation=p[3], value=None)
 
 
+def p_term_calc(p):
+    '''term : term MULTIPLY factor
+            | term DIVIDE factor'''
+    match [2]:
+        case '*':
+            p[0] = Expr(value=BinOp(left=p[1], op=Mult(), right=p[3]))
+        case '/':
+            p[0] = Expr(value=BinOp(left=p[1], op=Div(), right=p[3]))
+
+
+def p_expression_calc(p):
+    '''expression : expression PLUS term
+                  | expression MINUS term'''
+    match p[2]:
+        case '+':
+            p[0] = Expr(value=BinOp(left=p[1], op=Add(), right=p[3]))
+        case '-':
+            p[0] = Expr(value=BinOp(left=p[1], op=Sub(), right=p[3]))
+
+
+def p_expression_term(p):
+    'expression : term'
+    p[0] = p[1]
+
+
 def p_term_factor(p):
     '''term : factor'''
     p[0] = p[1]
 
 
 def p_factor_expr(p):
-    'factor : LPAREN expression RPAREN'
+    '''factor : LPAREN expression RPAREN
+            | literal'''
     p[0] = p[2]
 
 
