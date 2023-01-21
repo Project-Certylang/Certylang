@@ -86,6 +86,8 @@ special_tokens = (
     'EQ',  # equal, =
     'DEQ',  # double equal, ==
     'NOT',  # not, !
+    'COMMA', # comma, ,
+    'COLON', # colon, ;
 )
 
 t_LPAREN = r"\("
@@ -101,6 +103,8 @@ t_LE = r"<="
 t_EQ = r"="
 t_DEQ = r"=="
 t_NOT = r"!"
+t_COMMA = r","
+t_COLON = r";"
 
 comment_tokens = (  # js-like comment
     'COMMENT',  # single-line comment, //
