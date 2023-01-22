@@ -412,32 +412,12 @@ class CertyParser(object):
 
 parser = yacc.yacc(debug=False)
 
-text = ""
-def dfs(graph):
-    global text
-    if isinstance(graph, Expr):
-        for i in graph.child: dfs(i)
-        text += str(graph.leaf) + ' '
-    else: text += str(graph) + ' '
-
-# compile
-def compile(code):
-    global error_p
-    global text
-    text = ""
-    endcode = parser.parse(code)
-    if error_p: return False
-    dfs(endcode)
-    endtext = ""
-    for i in text.split():
-        endtext = endtext + i + ' '
-    return endtext
 
 if __name__ == "__main__":
     s = ""
     while True:
         t = input('>>')
         if t == "run" or t == 'r': break
-        s += t
-    result = compile(s)
+        s += t+'\n'
+    result = CertyParser().parse(s)
     print(result)
