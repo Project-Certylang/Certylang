@@ -149,7 +149,7 @@ def p_literal(p):  # function call (returned value), number, string, list, etc
 
 def p_subsitute(p):
     '''substitute : VAR '<' annotation '>' WHITESPACE ID EQ literal
-                  | VAR '<' annotation '>' ID
+                  | VAR '<' annotation '>' WHITESPACE ID
                   | ID EQ literal'''
     if len(p) == 8:
         p[0] = AnnAssign(target=Name(id=p[5].targets[0].id, ctx=Store()), annotation=p[3], value=p[7])
