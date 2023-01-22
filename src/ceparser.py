@@ -384,7 +384,7 @@ def p_factor_expr(p):
 def p_error(p):
     pass
 
-parser = yacc.yacc(debug=False)
+parser = yacc.yacc(debug=False, start="program")
 
 
 if __name__ == "__main__":
