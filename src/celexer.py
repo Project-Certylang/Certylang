@@ -21,11 +21,25 @@ type_tokens = (  # for guessing literal types
     'ANNONONE'
 )
 
-t_INTEGER = r"\d+"
-t_FLOAT = r"\d+\.\d+"
-t_STRING = r"'.*?'|\".*?\""  # check docstring separately
-t_BOOLEAN = r"true|false"
-t_NONE = r"none"
+
+def optws_wrap(t, *, left=False, right=False, required=False):
+    if required:
+        optws = "(\s+)"
+    else:
+        optws = "(\s*)"
+    r = t
+    if left:
+        r = optws + t
+    if right:
+        r = t + optws
+    return r
+
+
+t_INTEGER = optws_wrap(r"\d+", left=True)
+t_FLOAT = optws_wrap(r"\d+\.\d+", left=True)
+t_STRING = optws_wrap(r"'.*?'|\".*?\"", left=True)  # check docstring separately
+t_BOOLEAN = optws_wrap(r"true|false", left=True)
+t_NONE = optws_wrap(r"none", left=True)
 t_ANNOINTEGER = r"int"
 t_ANNOFLOAT = r"float"
 t_ANNOSTRING = r"str"
@@ -44,11 +58,11 @@ control_tokens = (
     'CASE', # match case
 )
 
-t_IF = r"if"
-t_FOR = r"for"
-t_WHILE = r"while"
-t_MATCH = r"match"
-t_CASE = r"case"
+t_IF = optws_wrap(r"if", right=True, required=True)
+t_FOR = optws_wrap(r"for", right=True, required=True)
+t_WHILE = optws_wrap(r"while", right=True, required=True)
+t_MATCH = optws_wrap(r"match", right=True, required=True)
+t_CASE = optws_wrap(r"case", right=True, required=True)
 
 define_tokens = (
     'VAR',  # variable
@@ -56,9 +70,9 @@ define_tokens = (
     'FUNCTION',  # function
 )
 
-t_VAR = r"var"
-t_CLASS = r"class"
-t_FUNCTION = r"function"
+t_VAR = optws_wrap(r"var", right=True, required=True)
+t_CLASS = optws_wrap(r"class", right=True, required=True)
+t_FUNCTION = optws_wrap(r"function", right=True, required=True)
 
 operation_tokens = (
     'PLUS',  # +
@@ -67,10 +81,10 @@ operation_tokens = (
     'MULTIPLY',  # *
 )
 
-t_PLUS = r"\+"
-t_MINUS = r"-"
-t_DIVIDE = r"/"
-t_MULTIPLY = r"\*"
+t_PLUS = optws_wrap(r"\+", left=True, right=True)
+t_MINUS = optws_wrap(r"-", left=True, right=True)
+t_DIVIDE = optws_wrap(r"/", left=True, right=True)
+t_MULTIPLY = optws_wrap(r"\*", left=True, right=True)
 
 special_tokens = (
     'LPAREN',  # left parentheses, (
@@ -90,21 +104,21 @@ special_tokens = (
     'COLON', # colon, ;
 )
 
-t_LPAREN = r"\("
-t_RPAREN = r"\)"
-t_LBRACE = r"\["
-t_RBRACE = r"\]"
-t_LBRACKET = r"\{"
-t_RBRACKET = r"\}"
-t_GT = r">"
-t_GE = r">="
-t_LT = r"<"
-t_LE = r"<="
-t_EQ = r"="
-t_DEQ = r"=="
-t_NOT = r"!"
-t_COMMA = r","
-t_COLON = r";"
+t_LPAREN = optws_wrap(r"\(", right=True)
+t_RPAREN = optws_wrap(r"\)", left=True)
+t_LBRACE = optws_wrap(r"\[", right=True)
+t_RBRACE = optws_wrap(r"\]", left=True)
+t_LBRACKET = optws_wrap(r"\{", right=True)
+t_RBRACKET = optws_wrap(r"\}", left=True)
+t_GT = optws_wrap(r">", left=True, right=True)
+t_GE = optws_wrap(r">=", left=True, right=True)
+t_LT = optws_wrap(r"<", left=True, right=True)
+t_LE = optws_wrap(r"<=", left=True, right=True)
+t_EQ = optws_wrap(r"=", left=True, right=True)
+t_DEQ = optws_wrap(r"==", left=True, right=True)
+t_NOT = optws_wrap(r"!", left=True)
+t_COMMA = optws_wrap(r",", left=True, right=True)
+t_COLON = optws_wrap(r";", right=True)
 
 comment_tokens = (  # js-like comment
     'COMMENT',  # single-line comment, //
@@ -136,7 +150,7 @@ tokens = (
     + operation_tokens
 )
 
-t_ID = r"[a-zA-Z_]+[a-zA-Z0-9_]*"
+t_ID = optws_wrap(r"[a-zA-Z_]+[a-zA-Z0-9_]*", left=True, right=True)
 t_WHITESPACE = r"\s+"
 t_NEWLINE = r"\n"
 t_DOT = r"\."
