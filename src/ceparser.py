@@ -12,7 +12,7 @@ emit_code = 1
 
 '''
 Define Variable  - varinit
-Change Variable Value  - subtitute
+Change Variable Value  - substitute
 
 Define Function  - def
 Call Function  - call
@@ -26,7 +26,7 @@ def p_program(p):
 
 def p_command(p):
     '''command : varinit
-               | subtitute
+               | substitute
                | def
                | call
                | NEWLINE
@@ -154,8 +154,8 @@ class AssignTemp:
         self.value = value
 
 
-def p_subtitute(p):
-    '''subtitute : ID EQ literal'''
+def p_substitute(p):
+    '''substitute : ID EQ literal'''
     p[0] = Assign(targets=[Name(id=p[1], ctx=Store())], value=p[3])
 
 
@@ -173,7 +173,7 @@ def p_annotation(p):
 
 
 def p_var_init_withdefault(p):
-    '''varinit : VAR '<' annotation '>' subtitute'''
+    '''varinit : VAR '<' annotation '>' substitute'''
     p[0] = AnnAssign(target=Name(id=p[5].targets[0].id, ctx=Store()), annotation=p[3], value=p[7])
         
 def p_var_init(p):
