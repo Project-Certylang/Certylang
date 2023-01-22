@@ -143,7 +143,8 @@ def p_literal(p):  # function call (returned value), number, string, list, etc
                | list
                | dict
                | tuple
-               | id'''
+               | id
+               | expression'''
     p[0] = p[1]
 
 
@@ -370,13 +371,13 @@ def p_expression_term(p):
 
 
 def p_term_factor(p):
-    '''term : factor'''
+    '''term : factor
+            | literal'''
     p[0] = p[1]
 
 
 def p_factor_expr(p):
-    '''factor : LPAREN expression RPAREN
-            | literal'''
+    '''factor : LPAREN expression RPAREN'''
     p[0] = p[2]
 
 
