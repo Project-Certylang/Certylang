@@ -29,10 +29,13 @@ def p_command(p):
                | subtitute
                | def
                | call
+               | NEWLINE
                | command NEWLINE command
                | command ';' command
                | command NEWLINE ';' command'''
     if len(p) == 2:
+        if p[1] == '\n':
+            return
         p[0] = [p[1]]
     else:
         p[0] = p[1].append(p[3])
@@ -380,36 +383,6 @@ def p_factor_expr(p):
 def p_error(p):
     pass
 
-
-class CertyLexer(object):
-    def __init__(self, debug=0, reflags=0):
-        self.lexer = lex.lex(debug=debug, reflags=reflags)
-        self.token_stream = None
-
-    def input(self, s, add_endmarker=True):
-        self.lexer.paren_count = 0
-        self.lexer.input(s)
-        self.token_stream = filter(self.lexer, add_endmarker)
-
-    def token(self):
-        try:
-            return next(self.token_stream)
-        except StopIteration:
-            return None
-
-
-class CertyParser(object):
-    def __init__(self, lexer=None):
-        if lexer is None:
-            lexer = CertyLexer()
-        self.lexer = lexer
-        self.parser = yacc.yacc(debug=False)
-    
-    def parse(self, code):
-        self.lexer.input(code)
-        result = self.parser.parse(lexer=self.lexer)
-        return Module(body=result)
-
 parser = yacc.yacc(debug=False)
 
 
@@ -419,5 +392,5 @@ if __name__ == "__main__":
         t = input('>>')
         if t == "run" or t == 'r': break
         s += t+'\n'
-    result = CertyParser().parse(s)
+    result = parser.parse(s)
     print(result)
