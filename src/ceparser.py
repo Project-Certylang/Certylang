@@ -388,13 +388,13 @@ parser = yacc.yacc(debug=False, start="program")
 
 
 if __name__ == "__main__":
-    s = ""
+    s = []
     while True:
         t = input('>>')
         if t == "run" or t == 'r': break
-        s += t+'\n'
+        s.append(t)
     print("--------------------")
-    print(s)
+    print("\n".join(s))
     print("--------------------")
     result = parser.parse(s)
     print(result)
