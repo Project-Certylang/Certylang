@@ -40,17 +40,6 @@ def p_command(p):
         p[0] = p[1].append(p[3])
 
 
-def p_empty(p):
-    '''empty :'''
-    pass
-
-
-def p_whitespace_optional(p):
-    '''optws : WHITESPACE
-             | empty'''
-    p[0] = p[1]
-
-
 def p_literal_list(p):
     '''list : LBRACE RBRACE
             | LBRACE listitems RBRACE'''
@@ -159,7 +148,7 @@ def p_literal(p):  # function call (returned value), number, string, list, etc
 
 
 def p_subsitute(p):
-    '''substitute : VAR '<' annotation '>' ID EQ literal
+    '''substitute : VAR '<' annotation '>' WHITESPACE ID EQ literal
                   | VAR '<' annotation '>' ID
                   | ID EQ literal'''
     if len(p) == 8:
