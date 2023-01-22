@@ -1,7 +1,7 @@
 import celexer
 tokens = celexer.tokens
 
-from ply import yacc
+from ply import yacc, lex
 
 from ast import *
 
@@ -21,7 +21,7 @@ Call Function  - call
 
 def p_program(p):
     '''program : command'''
-    p[0] = Module(body=p[1])
+    p[0] = p[1]
 
 
 def p_command(p):
@@ -103,8 +103,8 @@ def p_literal_call_kwargs(p):
 
 def p_literal_call_kwarg(p):
     '''kwarg : ID EQ literal
-             | '**' id
-             | '**' dict'''
+             | '*' '*' id
+             | '*' '*' dict'''
     p[0] = keyword(arg=p[1], value=p[3]) if p[1] != '*' else keyword(value=p[3])
 
 
@@ -380,6 +380,35 @@ def p_factor_expr(p):
 def p_error(p):
     pass
 
+
+class CertyLexer(object):
+    def __init__(self, debug=0, reflags=0):
+        self.lexer = lex.lex(debug=debug, reflags=reflags)
+        self.token_stream = None
+
+    def input(self, s, add_endmarker=True):
+        self.lexer.paren_count = 0
+        self.lexer.input(s)
+        self.token_stream = filter(self.lexer, add_endmarker)
+
+    def token(self):
+        try:
+            return next(self.token_stream)
+        except StopIteration:
+            return None
+
+
+class CertyParser(object):
+    def __init__(self, lexer=None):
+        if lexer is None:
+            lexer = CertyLexer()
+        self.lexer = lexer
+        self.parser = yacc.yacc(debug=False)
+    
+    def parse(self, code):
+        self.lexer.input(code)
+        result = self.parser.parse(lexer=self.lexer)
+        return Module(body=result)
 
 parser = yacc.yacc(debug=False)
 
