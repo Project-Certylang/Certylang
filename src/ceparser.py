@@ -18,12 +18,24 @@ Define Function  - def
 Call Function  - call
 '''
 
-def p_program(p):  # global
-    '''program : varinit
+
+def p_program(p):
+    '''program : command'''
+    p[0] = Module(body=p[1])
+
+
+def p_command(p):
+    '''command : varinit
                | subtitute
                | def
-               | call'''
-    p[0] = p[1]
+               | call
+               | command NEWLINE command
+               | command ';' command
+               | command NEWLINE ';' command'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1].append(p[3])
 
 
 def p_literal_list(p):
@@ -140,7 +152,7 @@ class AssignTemp:
 
 def p_subtitute(p):
     '''subtitute : ID EQ literal'''
-    p[0] = AssignTemp(targets=[Name(id=p[1], ctx=Store())], value=p[3])
+    p[0] = Assign(targets=[Name(id=p[1], ctx=Store())], value=p[3])
 
 
 def p_annotation(p):
@@ -158,7 +170,7 @@ def p_annotation(p):
 
 def p_var_init_withdefault(p):
     '''varinit : VAR '<' annotation '>' subtitute'''
-    p[0] = AnnAssign(target=Name(id=p[5], ctx=Store()), annotation=p[3], value=p[7])
+    p[0] = AnnAssign(target=Name(id=p[5].targets[0].id, ctx=Store()), annotation=p[3], value=p[7])
         
 def p_var_init(p):
     '''varinit : VAR '<' annotation '>' ID'''
@@ -166,9 +178,9 @@ def p_var_init(p):
 
 # function definition
 def p_func_init(p):
-    """def : FUNCTION ID '(' ')'
-           | FUNCTION ID '(' defargs ')'"""
-    if len(p) == 5:
+    """def : FUNCTION ID '(' ')' '{' defbody '}'
+           | FUNCTION ID '(' defargs ')' '{' defbody '}'"""
+    if len(p) == 8:
         p[0] = FunctionDef(
             name=p[2],
             args=arguments(
@@ -179,7 +191,7 @@ def p_func_init(p):
                 defaults=[]
             ),
             body=[
-                # TODO
+                p[6]
             ],
             decorator_list=[
                 # TODO
@@ -190,12 +202,17 @@ def p_func_init(p):
             name=p[2],
             args=p[4].make_args(),
             body=[
-                # TODO
+                p[6]
             ],
             decorator_list=[
                 # TODO
             ]
         )
+
+
+def p_def_body(p):
+    '''defbody : command'''
+    p[0] = p[1]
 
 
 class FunctionArgument:
