@@ -396,5 +396,5 @@ if __name__ == "__main__":
     print("--------------------")
     print("\n".join(s))
     print("--------------------")
-    result = parser.parse(s)
+    result = parser.parse("\n".join(s))
     print(result)
