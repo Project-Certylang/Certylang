@@ -29,9 +29,9 @@ def optws_wrap(t, *, left=False, right=False, required=False):
         optws = "(?:\s*)"
     r = t
     if left:
-        r = optws + t
+        r = optws + r
     if right:
-        r = t + optws
+        r = r + optws
     return r
 
 
