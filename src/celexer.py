@@ -24,9 +24,9 @@ type_tokens = (  # for guessing literal types
 
 def optws_wrap(t, *, left=False, right=False, required=False):
     if required:
-        optws = "(\s+)"
+        optws = "(?:\s+)"
     else:
-        optws = "(\s*)"
+        optws = "(?:\s*)"
     r = t
     if left:
         r = optws + t
@@ -70,7 +70,7 @@ define_tokens = (
     'FUNCTION',  # function
 )
 
-t_VAR = optws_wrap(r"var", right=True, required=True)
+t_VAR = optws_wrap(r"var", right=True)
 t_CLASS = optws_wrap(r"class", right=True, required=True)
 t_FUNCTION = optws_wrap(r"function", right=True, required=True)
 
@@ -151,6 +151,7 @@ tokens = (
 )
 
 t_ID = optws_wrap(r"[a-zA-Z_]+[a-zA-Z0-9_]*", left=True, right=True)
+
 t_WHITESPACE = r"\s+"
 t_NEWLINE = r"\n"
 t_DOT = r"\."
