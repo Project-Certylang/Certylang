@@ -76,8 +76,8 @@ def p_literal_call_kwargs(p):
 
 def p_literal_call_kwarg(p):
     '''kwarg : ID EQ literal
-             | '*' '*' id
-             | '*' '*' dict'''
+             | '**' id
+             | '**' dict'''
     p[0] = keyword(arg=p[1], value=p[3]) if p[1] != '*' else keyword(value=p[3])
 
 
@@ -149,9 +149,165 @@ def p_var_init(p):
     '''substitute : VAR '<' annotation '>' ID'''
     p[0] = AnnAssign(target=Name(id=p[5], ctx=Store()), annotation=p[3], value=None)
 
+# function definition
 def p_func_init(p):
-    "com : FUNCTION ID '(' call ')'"
-    p[0] = FunctionDef(name='func',args=arguments(posonlyargs=[],args=[arg(arg=p[4])],kwonlyargs=[],kw_defaults=[],defaults=[]),body=[Pass()],decorator_list=[])
+    """def : FUNCTION ID '(' ')'
+           | FUNCTION ID '(' defargs ')'"""
+    if len(p) == 5:
+        p[0] = FunctionDef(
+            name=p[2],
+            args=arguments(
+                posonlyargs=[],
+                args=[],
+                kwonlyargs=[],
+                kw_defaults=[],
+                defaults=[]
+            ),
+            body=[
+                # TODO
+            ],
+            decorator_list=[
+                # TODO
+            ]
+        )
+    else:
+        p[0] = FunctionDef(
+            name=p[2],
+            args=p[4].make_args(),
+            body=[
+                # TODO
+            ],
+            decorator_list=[
+                # TODO
+            ]
+        )
+
+
+class FunctionArgument:
+    def __init__(self, arg=None, annotation=None, default=None, psarg=False, vrarg=False, kwarg=False):
+        self.default = default
+        self.arg = arg
+        self.annotation = annotation
+        self.is_positional_sign = psarg  # /
+        self.is_keyword_sign = kwarg  # **
+        self.is_var_sign = vrarg  # *
+    
+    def make_arg(self):
+        return arg(arg=self.arg, annotation=self.annotation)
+
+
+class FunctionArgumentManager:
+    def __init__(self, start_arg: FunctionArgument):
+        self.pos_used = start_arg.is_positional_sign
+        self.var_used = start_arg.is_var_sign
+        self.kw_used = start_arg.is_keyword_sign
+        
+        self.force_default = start_arg.default is not None
+        self.defaults = []
+        self.kw_defaults = []
+        
+        self.vararg = None
+        self.kwarg = None
+        
+        self.positional_args = []  # positional only
+        self.normal_args = []  # positional, keyword
+        self.keyword_args = []  # keyword only
+        if self.var_used:
+            self.vararg = start_arg.make_arg()
+        elif self.kw_used:
+            if start_arg:
+                raise SyntaxError("positional argument follows keyword-only argument")
+            self.kwarg = start_arg.make_arg()
+        else:
+            self.normal_args.append(start_arg)
+        
+    def put_arg(self, arg: FunctionArgument):
+        if arg.is_positional_sign:
+            if self.pos_used:
+                raise SyntaxError("duplicate '/' in function definition")
+            if self.var_used:
+                raise SyntaxError("positional argument follows keyword-only argument")
+            if self.kw_used:
+                raise SyntaxError("argument cannot follows keyword argument")
+            self.pos_used = True
+            self.positional_args = self.normal_args.copy()
+            self.normal_args = []
+        elif arg.is_keyword_sign:
+            if self.kw_used:
+                raise SyntaxError("duplicate '**' in function definition")
+            self.kw_used = True
+            self.kwarg = arg.make_arg()
+        elif arg.is_var_sign:
+            if self.var_used:
+                raise SyntaxError("duplicate '*' in function definition")
+            if self.kw_used:
+                raise SyntaxError("argument cannot follows keyword argument")
+            self.var_used = True
+            self.vararg = arg.make_arg()
+        else:
+            if arg.default is not None:
+                self.force_default = True
+                if self.var_used:
+                    self.kw_defaults.append(arg.default)
+                else:
+                    self.defaults.append(arg.default)
+            else:
+                if self.force_default:
+                    raise SyntaxError("non-default argument follows default argument")
+                
+            if self.kw_used:
+                raise SyntaxError("argument cannot follows keyword argument")
+            elif self.var_used:
+                self.keyword_args.append(arg)
+            else:
+                self.normal_args.append(arg.make_arg())
+                    
+    
+    def make_args(self):
+        return arguments(
+            posonlyargs=self.positional_args,
+            args=self.normal_args,
+            kwonlyargs=self.keyword_args,
+            kw_defaults=self.kw_defaults,
+            defaults=self.defaults,
+            kwargs=self.kwarg,
+            vararg=self.vararg
+        )
+
+
+def p_func_args(p):
+    '''defargs : defargs COMMA defarg
+               | defarg'''
+    if len(p) == 2:
+        p[0] = FunctionArgumentManager(p[1])
+    else:
+        p[1].put_arg(p[3])
+        p[0] = p[1]
+
+
+def p_func_arg(p):
+    """defarg : ID '<' annotation '>'
+              | ID '<' annotation '>' EQ literal
+              | '/'
+              | PSARG
+              | KWARG"""
+    if len(p) >= 4:
+        o = FunctionArgument(arg=p[1], annotation=p[3])
+        if len(p) == 6:
+            o.default = p[5]
+    else:  # '/', '*', '*asdf', '**asdf'
+        if p[1] == '/':
+            o = FunctionArgument(psarg=True)
+        elif p[1] == '*':
+            o = FunctionArgument(vrarg=True)
+        elif p[1].startswith('**'):
+            o = FunctionArgument(kwarg=True, arg=p[1][2:])
+        elif p[1].startswith('*'):
+            o = FunctionArgument(vrarg=True, arg=p[1][1:])
+    p[0] = o
+        
+
+# function definition end
 
 def p_term_calc(p):
     '''term : term MULTIPLY factor
