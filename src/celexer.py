@@ -125,6 +125,8 @@ tokens = (
         'WHITESPACE',
         'NEWLINE',
         'DOT',
+        'PSARG',
+        'KWARG'
     )
     + type_tokens
     + control_tokens
@@ -148,6 +150,11 @@ def t_error(t):
     print("%d: Illegal character '%s'" % (t.lexer.lineno, t.value[0]))
     print(t.value)
     t.lexer.skip(1)
+    
+
+t_PSARG = r'\*' + t_ID + "?"
+t_KWARG = r'\*\*' + t_ID
+    
 
 lexer = lex.lex()
 
