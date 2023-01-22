@@ -150,7 +150,7 @@ tokens = (
     + operation_tokens
 )
 
-t_ID = optws_wrap(r"[a-zA-Z_]+[a-zA-Z0-9_]*", left=True, right=True)
+t_ID = r"[a-zA-Z_]+[a-zA-Z0-9_]*"
 
 t_WHITESPACE = r"\s+"
 t_NEWLINE = r"\n"
