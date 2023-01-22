@@ -10,6 +10,21 @@ preclist = []
 
 emit_code = 1
 
+'''
+Define Variable  - varinit
+Change Variable Value  - subtitute
+
+Define Function  - def
+Call Function  - call
+'''
+
+def p_program(p):  # global
+    '''program : varinit
+               | subtitute
+               | def
+               | call'''
+    p[0] = p[1]
+
 
 def p_literal_list(p):
     '''list : LBRACE RBRACE
@@ -142,11 +157,11 @@ def p_annotation(p):
 
 
 def p_var_init_withdefault(p):
-    '''substitute : VAR '<' annotation '>' subtitute'''
+    '''varinit : VAR '<' annotation '>' subtitute'''
     p[0] = AnnAssign(target=Name(id=p[5], ctx=Store()), annotation=p[3], value=p[7])
         
 def p_var_init(p):
-    '''substitute : VAR '<' annotation '>' ID'''
+    '''varinit : VAR '<' annotation '>' ID'''
     p[0] = AnnAssign(target=Name(id=p[5], ctx=Store()), annotation=p[3], value=None)
 
 # function definition
