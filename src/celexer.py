@@ -22,7 +22,7 @@ type_tokens = (  # for guessing literal types
 )
 
 t_INTEGER = r"\d+"
-t_FLOAT = r"\d+.\d+"
+t_FLOAT = r"\d+\.\d+"
 t_STRING = r"'.*?'|\".*?\""  # check docstring separately
 t_BOOLEAN = r"true|false"
 t_NONE = r"none"
