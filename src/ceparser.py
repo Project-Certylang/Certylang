@@ -392,5 +392,8 @@ if __name__ == "__main__":
         t = input('>>')
         if t == "run" or t == 'r': break
         s += t+'\n'
+    print("--------------------")
+    print(s)
+    print("--------------------")
     result = parser.parse(s)
     print(result)
