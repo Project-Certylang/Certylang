@@ -148,12 +148,6 @@ def p_literal(p):  # function call (returned value), number, string, list, etc
     p[0] = p[1]
 
 
-class AssignTemp:
-    def __init__(self, targets: list, value):
-        self.targets = targets
-        self.value = value
-
-
 def p_substitute(p):
     '''substitute : ID EQ literal'''
     p[0] = Assign(targets=[Name(id=p[1], ctx=Store())], value=p[3])
