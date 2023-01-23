@@ -1,5 +1,30 @@
 from ply import lex
 
+
+# expected input : type of keyword (also token name)
+class KeywordManager:
+    def __init__(self):
+        self.keywords = {}
+    
+    def add_keywords(self, keywords: dict):
+        for key, value in keywords.items():
+            if key in self.keywords:
+                raise ValueError(f"Keyword {key} already exists")
+            self.keywords[key] = value
+    
+    def __iadd__(self, keywords: dict):
+        self.add_keywords(keywords)
+        return self
+
+    def get_all(self):
+        return tuple(self.keywords.values())
+
+    def get(self, key, default=None):
+        return self.keywords.get(key, default)
+
+keywords = KeywordManager()
+
+
 type_tokens = (  # for guessing literal types
     'INTEGER', # int
     'FLOAT', # float
@@ -9,17 +34,19 @@ type_tokens = (  # for guessing literal types
     #  'TUPLE',  Removed Tuple - Same with list
     #  'DICTIONARY',  Removed Dictionary - Same with list
     #  'CALLABLE', Removed Callable - Same with lsit
-    'NONE',  # none,
-    'ANNOINTEGER', # 
-    'ANNOFLOAT', #
-    'ANNOSTRING', #
-    'ANNOBOOLEAN', #,
-    'ANNOLIST',
-    'ANNOTUPLE',
-    'ANNODICTIONARY',
-    'ANNOCALLABLE',
-    'ANNONONE'
 )
+
+keywords += {
+    'int': 'ANNOINTEGER',
+    'float': 'ANNOFLOAT',
+    'str': 'ANNOSTRING',
+    'bool': 'ANNOBOOLEAN',
+    'list': 'ANNOLIST',
+    'tuple': 'ANNOTUPLE',
+    'dict': 'ANNODICTIONARY',
+    'callable': 'ANNOCALLABLE',
+    'none': 'NONE'
+}
 
 
 def optws_wrap(t, *, left=False, right=False, required=False):
@@ -39,40 +66,21 @@ t_INTEGER = optws_wrap(r"\d+", left=True)
 t_FLOAT = optws_wrap(r"\d+\.\d+", left=True)
 t_STRING = optws_wrap(r"'.*?'|\".*?\"", left=True)  # check docstring separately
 t_BOOLEAN = optws_wrap(r"true|false", left=True)
-t_NONE = optws_wrap(r"none", left=True)
-t_ANNOINTEGER = r"int"
-t_ANNOFLOAT = r"float"
-t_ANNOSTRING = r"str"
-t_ANNOBOOLEAN = r"bool"
-t_ANNOLIST = r"list"
-t_ANNOTUPLE = r"tuple"
-t_ANNODICTIONARY = r"dict"
-t_ANNOCALLABLE = r"callable"
-t_ANNONONE = r"none"
 
-control_tokens = (
-    'IF',  # if
-    'FOR',  # for
-    'WHILE',  # while
-    'MATCH',  # match case
-    'CASE', # match case
-)
 
-t_IF = optws_wrap(r"if", right=True, required=True)
-t_FOR = optws_wrap(r"for", right=True, required=True)
-t_WHILE = optws_wrap(r"while", right=True, required=True)
-t_MATCH = optws_wrap(r"match", right=True, required=True)
-t_CASE = optws_wrap(r"case", right=True, required=True)
+keywords += {
+    'if': 'IF',
+    'for': 'FOR',
+    'while': 'WHILE',
+    'match': 'MATCH',
+    'case': 'CASE'
+}
 
-define_tokens = (
-    'VAR',  # variable
-    'CLASS',  # class
-    'FUNCTION',  # function
-)
-
-t_VAR = optws_wrap(r"var", right=True)
-t_CLASS = optws_wrap(r"class", right=True, required=True)
-t_FUNCTION = optws_wrap(r"function", right=True, required=True)
+keywords += {
+    'var': 'VAR',  # variable
+    'class': 'CLASS',  # class
+    'function': 'FUNCTION',  # function
+}
 
 operation_tokens = (
     'PLUS',  # +
@@ -143,14 +151,18 @@ tokens = (
         'KWARG'
     )
     + type_tokens
-    + control_tokens
-    + define_tokens
     + special_tokens
     + comment_tokens
     + operation_tokens
+    + keywords.get_all()
 )
 
-t_ID = r"[a-zA-Z_]+[a-zA-Z0-9_]*"
+IDRule = r"[a-zA-Z_][a-zA-Z0-9_]*"
+
+@lex.TOKEN(IDRule)
+def t_ID(t):
+    t.type = keywords.get(t.value, 'ID')
+    return t
 
 t_WHITESPACE = r"\s+"
 t_NEWLINE = r"\n"
@@ -167,8 +179,8 @@ def t_error(t):
     t.lexer.skip(1)
     
 
-t_PSARG = r'\*' + t_ID + "?"
-t_KWARG = r'\*\*' + t_ID
+t_PSARG = r'\*' + r'(' + IDRule + r')' + "?"
+t_KWARG = r'\*\*' + IDRule
     
 
 lexer = lex.lex()
