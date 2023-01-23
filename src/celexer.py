@@ -122,8 +122,8 @@ t_GT = optws_wrap(r">", left=True, right=True)
 t_GE = optws_wrap(r">=", left=True, right=True)
 t_LT = optws_wrap(r"<", left=True, right=True)
 t_LE = optws_wrap(r"<=", left=True, right=True)
-t_EQ = optws_wrap(r"=", left=True, right=True)
 t_DEQ = optws_wrap(r"==", left=True, right=True)
+t_EQ = optws_wrap(r"=", left=True, right=True)
 t_NOT = optws_wrap(r"!", left=True)
 t_COMMA = optws_wrap(r",", left=True, right=True)
 t_COLON = optws_wrap(r";", right=True)
@@ -164,7 +164,10 @@ def t_ID(t):
     t.type = keywords.get(t.value, 'ID')
     return t
 
-t_WHITESPACE = r"\s+"
+def t_WHITESPACE(t):
+    r"\s+"
+    pass
+
 t_NEWLINE = r"\n"
 t_DOT = r"\."
 
